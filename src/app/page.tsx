@@ -1,7 +1,10 @@
 'use client'
 import Image from "next/image";
 import React from "react";
+import { Line } from 'react-chartjs-2'
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
 
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
 export default function Home() {
 
@@ -9,51 +12,74 @@ export default function Home() {
   const [yearsToSave, setYearsToSave] = React.useState("5")
   const [ratePercentage, setRatePercentage] = React.useState(5)
   const [contributionAmount, setContributionAmount] = React.useState("100")
-  const [compoundFrequency, setCompoundFrequency] = React.useState("Yearly")
+  const [compoundFrequency, setCompoundFrequency] = React.useState("Monthly")
+
+
+  const data = {
+    labels: [1, 2, 3],
+
+    datasets: [
+      {
+        label: "numbers",
+        data: [10, 20, 30],
+      }
+    ]
+  }
 
 
   function handleClick() {
-    
     const ans = compoundInterest()
     console.log(ans)
-    
   }
 
-  function compoundInterest(){
+  function compoundInterest() {
     // A = P(1 + r/n)^n*t
 
-    const P = +initialDeposit // Initial deposit
-    const t = +yearsToSave // How many years want to save
-    const r = ratePercentage * 0.01
-    var n:number; // times compounded in a year
-    var C = +contributionAmount // how much to contribute each month
+    var totalAmount;
+    const principal = +initialDeposit // Initial deposit
+    const timeInYears = +yearsToSave // How many years want to save
+    const rate = ratePercentage * 0.01
+    var compoundingFrequency: number; // times compounded in a year
+    const monthlyContribution = +contributionAmount // how much to contribute each month
 
-    var arr = [] // array to store yearly values 
-    
-    if(compoundFrequency == "Yearly"){
-      n = 1
-    } else {
-      n = 12
-    }
+    //
+    if (compoundFrequency == "Yearly") {
+      compoundingFrequency = 1
 
-    const base = 1 + r / n
-    const exponent = n * t
-    const principalGrowth = P * base ** exponent
+      const base = 1 + rate / compoundingFrequency
+      const totalPeriods = timeInYears * compoundingFrequency; // Total compounding periods (n * t)
 
-    const contributionGrowth = C * ((Math.pow(base,exponent) - 1) / (r/n)) 
+      const principalGrowth = principal * Math.pow(base, totalPeriods);
 
-    const totalAmount = principalGrowth + contributionGrowth
-
-  
-    const perYear = () => {
-
-      for(let i = 1; i <= t; i++){
-       
+      // Growth of monthly contributions
+      let contributionsGrowth = 0;
+      for (let month = 1; month <= timeInYears * 12; month++) {
+        const remainingTime = timeInYears - month / 12; // Remaining time in years for each contribution
+        contributionsGrowth += monthlyContribution * Math.pow(base, remainingTime);
       }
-    }
 
+      // Total amount
+      totalAmount = principalGrowth + contributionsGrowth
+
+    } 
+    //
+    else {
+      compoundingFrequency = 12
+      
+      const base = 1 + rate / compoundingFrequency
+      const exponent = compoundingFrequency * timeInYears
+      const principalGrowth = principal * (base ** exponent)
+
+      const contributionGrowth = monthlyContribution * (((base ** exponent) - 1) / (rate / compoundingFrequency))
+
+      // Total amount
+      totalAmount = principalGrowth + contributionGrowth
+    }
+    // Final return 
     return totalAmount.toFixed(2)
   }
+
+
 
 
   // onChange Functions
@@ -81,8 +107,8 @@ export default function Home() {
 
   const handleChangeRatePercentage = (e: any) => {
     const inputValue = e.target.value;
-    // Years to save must be between 1 and 50
-    const maxValue = 100
+    // Rate Percentage must be between 0 and 50
+    const maxValue = 50
     const minValue = 1
     // Use regex to allow only digits
     if (/^\d*$/.test(inputValue) && inputValue <= maxValue) {
@@ -138,8 +164,8 @@ export default function Home() {
           <div>
             <label htmlFor="compound-frequency-id">Compound frequency</label>
             <select onChange={handleChangeCompundFrequency}>
-              <option value="Yearly">Yearly</option>
               <option value="Monthly">Monthly</option>
+              <option value="Yearly">Yearly</option>
             </select>
           </div>
 
