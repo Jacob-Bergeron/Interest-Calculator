@@ -21,9 +21,15 @@ body {
 }
 
 .page {
-  display: flex;
+  position: relative;
+  height: auto;
+  width: auto;
   justify-content: center;
-  align-content: center;
+  
+}
+
+.main-box {
+  background-color: aqua;
 }
 
 .outer-box {
@@ -33,6 +39,10 @@ body {
   background-color: rgba(218, 190, 118, 0.892);
   height: 80vh;
   width: 50vw;
+}
+
+.graphbox{
+position: relative;
 }
 
 .details {
@@ -67,7 +77,7 @@ input {
   border: 0.07em, solid, #171717;
 
   width: 30%;
-  heght: auto;
+  height: auto;
 }
 
 button {
