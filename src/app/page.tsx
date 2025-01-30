@@ -2,9 +2,9 @@
 import Image from "next/image";
 import React from "react";
 import { Line } from 'react-chartjs-2'
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js'
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
 
 
 export default function Home() {
@@ -18,33 +18,54 @@ export default function Home() {
   const [chartData, setChartData] = React.useState<number[]>([])
   const [labelData, setLabelData] = React.useState<number[]>([])
 
-  const timeInYears = +yearsToSave // How many years want to save
 
-
-
+  //* Chart 
   const data = {
     labels: labelData,
 
     datasets: [
       {
-        label: "Total Amount",
+        label: "Total Balance",
         data: chartData,
+        borderColor: 'rgb(11, 143, 9)', // line color
+        backgroundColor: 'rgba(45, 195, 28, 0.24)', // point color
+        fill: true,
+        pointHoverBackgroundColor: 'rgb(226, 24, 24)',
+        tension: 0.1,
       }
     ]
   }
 
 
-  // Function to be called when "submit" is clicked
+  const options = {
+    responsive: true,
+  };
+
+
+
+  //* Function to be called when "submit" is clicked
   function handleClick() {
-    const ans = compoundInterest(timeInYears)
-    perYear()
-    console.log(ans)
+    const timeInYears = +yearsToSave // How many years we want to save
+    perYear(timeInYears)
   }
 
+  //* Function to put data into array   
+  function perYear(t: number) {
+    const chartDataHolder: number[] = []
+    const labelDataHolder: number[] = []
+    const currentYear = new Date().getFullYear()
 
-  // Function for calculating the compound interest
+    for (let i = 0; i <= t; i++) {
+      chartDataHolder.push(compoundInterest(i))
+      labelDataHolder.push(i + currentYear)
+    }
+
+    setChartData(chartDataHolder)
+    setLabelData(labelDataHolder)
+  }
+
+  //* Function for calculating the compound interest
   function compoundInterest(t: number): number {
-    // A = P(1 + r/n)^n*t
 
     var totalAmount: number;
     const principal = +initialDeposit // Initial deposit
@@ -75,7 +96,7 @@ export default function Home() {
       compoundingFrequency = 12
 
       const base = 1 + rate / compoundingFrequency
-      const exponent = compoundingFrequency * t
+      const exponent = t * compoundingFrequency
       const principalGrowth = principal * (base ** exponent)
 
       const contributionGrowth = monthlyContribution * (((base ** exponent) - 1) / (rate / compoundingFrequency))
@@ -88,26 +109,8 @@ export default function Home() {
   }
 
 
-  function perYear() {
-    const fakeChartData: number[] = []
-    const fakeLabelData: number[] = []
-    const d = new Date()
-
-
-    for (let i = 0; i <= timeInYears; i++) {
-      fakeChartData.push(compoundInterest(i))
-      fakeLabelData.push(i + d.getFullYear())
-    }
-
-    setChartData(fakeChartData)
-    setLabelData(fakeLabelData)
-  }
-
-
-
-
-  // onChange Functions
-  // =====================
+  //* onChange Functions
+  //* =====================
   const handleChangeInitialDeposit = (e: any) => {
     const inputValue = e.target.value;
     // Initial deposit must be <= 1,000,000
@@ -204,7 +207,7 @@ export default function Home() {
         </div>
 
         <div className="graphbox">
-          <Line data={data} />
+          <Line data={data} options={options} />
         </div>
 
       </div>

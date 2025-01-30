@@ -9,7 +9,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #ccc9c9;
+    --background: #dad8d8;
     --foreground: #ededed;
   }
 }
@@ -21,28 +21,27 @@ body {
 }
 
 .page {
-  position: relative;
-  height: auto;
-  width: auto;
-  justify-content: center;
   
 }
 
 .main-box {
-  background-color: aqua;
+  position: relative;
+  top: 18vh;
+
+  margin-left: 2vw;
+  margin-right: 2vw;
+
+  display: flex;
+  gap: 1.5vw;
 }
 
-.outer-box {
-  position: absolute;
-  top: 10vh;
-
-  background-color: rgba(218, 190, 118, 0.892);
-  height: 80vh;
-  width: 50vw;
+.invest-box {
+  width: 30%;
 }
 
-.graphbox{
-position: relative;
+.graphbox {
+  width: 70%;
+  height: 100%;
 }
 
 .details {
@@ -51,7 +50,8 @@ position: relative;
   justify-content: space-between;
 
   height: 90%;
-  background-color: #a79d62;
+  background-color: #dcd195;
+  color: #000000;
   padding-top: 2vh;
   padding-bottom: 2vh;
   padding-left: 1.5vw;
@@ -82,6 +82,7 @@ input {
 
 button {
   background-color: green;
+  color: #ffffff;
   padding: 0.5em;
 }
 
@@ -90,5 +91,4 @@ select {
   height: 2rem;
   color: #000000;
   border: 0.07em, solid, #171717;
-
 }
